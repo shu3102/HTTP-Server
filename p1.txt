@@ -1,0 +1,10 @@
+POST /Master HTTP/1.1
+Host: 127.0.0.1:10050
+User-Agent: python-requests/2.22.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: keep-alive
+Content-Length: 23
+Content-Type: application/x-www-form-urlencoded
+
+key1=value1&key2=value2
