@@ -19,7 +19,7 @@ server_ip='127.0.0.1'
 def test_get_files():
     time.sleep(1)
     
-    url=['cn.htm','mymusic.mp3','myimage.jpg','slick.bin']
+    url=['data/cn.htm','data/mymusic.mp3','data/myimage.jpg','data/slick.bin']
     for i in url:
       response=requests.get(f'http://{server_ip}:{server_port}/{i}')
       print("\n***TEST OF FILES GET***")
@@ -38,7 +38,7 @@ def test_get_files():
 def test_conditional_get(): 
     time.sleep(1)
     
-    last_mod=os.path.getmtime('cn.htm')
+    last_mod=os.path.getmtime('data/cn.htm')
     l_date=format_date_time(last_mod)
     extra_head={'If-Modified-Since':l_date}        
     response=requests.get(f'http://{server_ip}:{server_port}/cn.htm',headers=extra_head)   
@@ -99,7 +99,7 @@ def test_get_directory():
 def test_head():
     time.sleep(1)
     
-    response=requests.head(f'http://{server_ip}:{server_port}/index.html')
+    response=requests.head(f'http://{server_ip}:{server_port}/data/index.html')
     print("\n***TEST OF HEAD***")
     if(response.status_code==200):
             print(f"Received status code: {response.status_code}-->Successful")
@@ -235,7 +235,7 @@ if(1):
     '''
     objput = {'put1': 'value1', 'put2': 'value2'}
     # already existing file
-    url = base_url + "/dll.txt"
+    url = base_url + "data/dll.txt"
     Thread(target = put, args=(url,objput,)).start()
     #put(url,objput)
 
@@ -246,7 +246,7 @@ if(1):
     print("started")
     #put with a text file
     url = base_url + "/myNew.txt" 
-    path = "dll.txt"
+    path = "data/dll.txt"
     filename = "dll"
     #Thread(target = put_file, args=(url,path)).start()
     put_file(url, path)

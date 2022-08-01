@@ -22,7 +22,7 @@ from configparser import ConfigParser
 
 config = ConfigParser()
 
-config.read('server_config.ini')
+config.read('config/server_config.ini')
 global cookie_id
 MAX_URI_LEN = config['http_server']['max_urllen']
 port_no = config['http_server']['port_no']
@@ -69,18 +69,13 @@ class form_socket:
                 print(addr, "is conneted")
                 CLIENTS.append((client, addr))
                 _thread.start_new_thread(self.recieve_data, (client, addr))
-                #req = client.recv(8192)
-                #f = open("p1.txt", "w")
-                #f.write(req.decode(encoding="utf8", errors='ignore'))
-                # f.close()
-                #req_obj = httprequest(req, client, addr)
             except:
                 print("Error")
                 break
 
     def recieve_data(self, client, addr):
         req = client.recv(8192)
-        f = open("p1.txt", "w")
+        f = open("data/p1.txt", "w")
         f.write(req.decode(encoding="utf8", errors='ignore'))
         f.close()
         req_obj = httprequest(req, client, addr)
@@ -331,7 +326,7 @@ class httpresponse:
             blank_line = b"\r\n"
             form_socket.mysend(b"".join([response_line, response_headers.encode(
             ), blank_line, dir_body.encode()]), client, addr)
-            f = open("Access.log", "a+")
+            f = open("log/Access.log", "a+")
             log_status = 200
             f.write(
                 f"{addr[0]} -- {time.ctime()}  {req_obj.method}  {req_obj.uri}  {req_obj.version}  {log_status}  {dir_size} {req_obj.user_agent}\n")
@@ -394,7 +389,7 @@ class httpresponse:
                 extra_headers = {'Set-Cookie': c}
                 get_header.update(extra_headers)
                 response_headers = self.add_header(extra_headers)
-                with open('server_cook.log', 'a+') as f:
+                with open('log/server_cook.log', 'a+') as f:
                     towrite = "".join(('\n', "IP ADDRESS=", str(
                         addr), "|", "COOKIE ID=", cookie_id))
                     f.write(towrite)
@@ -402,7 +397,7 @@ class httpresponse:
                 s = int(cookie_id)
                 s = s+1
                 config['http_server']['cookie_id'] = str(s)
-                with open('server_config.ini', 'w') as file:
+                with open('config/server_config.ini', 'w') as file:
                     config.write(file)
                     file.close()
 
@@ -441,7 +436,7 @@ class httpresponse:
 
             if(head == False):
 
-                with open('Access.log', "a+") as fd:
+                with open('log/Access.log', "a+") as fd:
                     # rline=response_line.decode().split('\r\n')
                     fd.write(
                         f"{addr[0]} -- {time.ctime()}  {req_obj.method}  {req_obj.uri}  {req_obj.version}  {log_status}  {size} {req_obj.user_agent}\n")
@@ -453,7 +448,7 @@ class httpresponse:
                 return
             elif(head == True):
 
-                with open('Access.log', "a+") as fd:
+                with open('log/Access.log', "a+") as fd:
                     #fd.write(f"{time.ctime()} - {addr} - {req_obj.uri} - {req_obj.method} - {response_line} - {log_status}\n")
                     fd.write(
                         f"{addr[0]} -- {time.ctime()}  {req_obj.method}  {req_obj.uri}  {req_obj.version}  {log_status}  0 {req_obj.user_agent}\n")
@@ -835,11 +830,11 @@ class httpresponse:
                 [response_line.encode(), headers.encode(), "\r\n".encode()])
         log_size = sys.getsizeof(for_log)
 
-        with open('Access.log', "a+") as fd:
+        with open('log/Access.log', "a+") as fd:
             fd.write(
                 f"{addr[0]} -- {time.ctime()}  {req_obj.method}  {req_obj.uri}  {req_obj.version}  {status_c}  {log_size} {req_obj.user_agent}\n")
         if(status_c >= 400):
-            with open('Error.log', "a+") as fd:
+            with open('log/Error.log', "a+") as fd:
                 fd.write(
                     f"{addr[0]} --  {time.ctime()}  {req_obj.method}  {req_obj.uri}  {req_obj.version}  {status_c}  {log_size} {req_obj.user_agent}\n")
         form_socket.mysend(response, client, addr)
